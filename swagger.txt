@@ -1,0 +1,139 @@
+ApiCine: 1.0.0
+info:
+  title: Cine API
+  description: API para gestionar funciones, películas, reservas y más.
+  version: 1.0.0
+servers:
+  - url: http://localhost:11
+    description: Servidor local
+ 
+paths:
+  /get_movies_by_date/{date_str}:
+    get:
+      summary: Obtener películas por fecha
+      description: Devuelve una lista de películas que se proyectarán en una fecha específica.
+      parameters:
+        - name: date_str
+          in: path
+          required: true
+          description: Fecha de la proyección en formato YYYY-MM-DD
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Lista de películas proyectadas en la fecha especificada.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pelicula'
+        '404':
+          description: No se encontraron películas para la fecha especificada.
+ 
+  /get_movies/{peliculaID}:
+    get:
+      summary: Obtener detalles de una película
+      description: Devuelve los detalles de una película específica por su ID.
+      parameters:
+        - name: peliculaID
+          in: path
+          required: true
+          description: ID de la película
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detalles de la película especificada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pelicula'
+        '404':
+          description: No se encontró la película con el ID especificado.
+ 
+  /make_reservation:
+    post:
+      summary: Hacer una reserva
+      description: Crea una reserva para una función especificada.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservaRequest'
+      responses:
+        '201':
+          description: Reserva creada con éxito.
+        '400':
+          description: Error en los datos de entrada.
+        '404':
+          description: No se pudo encontrar la función o las butacas necesarias.
+        '500':
+          description: Error en el servidor al intentar crear la reserva.
+ 
+components:
+  schemas:
+    Pelicula:
+      type: object
+      properties:
+        idPelicula:
+          type: integer
+          description: ID único de la película.
+        titulo:
+          type: string
+          description: Título de la película.
+        sinopsis:
+          type: string
+          description: Sinopsis de la película.
+        duracion:
+          type: integer
+          description: Duración de la película en minutos.
+        reparto:
+          type: string
+          description: Reparto de la película.
+        estado:
+          type: string
+          description: Estado de la película (Activa/Inactiva).
+        observaciones:
+          type: string
+          description: Observaciones adicionales sobre la película.
+    ReservaRequest:
+      type: object
+      properties:
+        funcionId:
+          type: integer
+          description: ID de la función para la que se realiza la reserva.
+        cantidad:
+          type: integer
+          description: Número de butacas a reservar.
+        dni:
+          type: string
+          description: DNI de la persona que realiza la reserva.
+      required:
+        - funcionId
+        - cantidad
+        - dni
+    Reserva:
+      type: object
+      properties:
+        reservaId:
+          type: integer
+          description: ID único de la reserva.
+        funcionId:
+          type: integer
+          description: ID de la función reservada.
+        dni:
+          type: string
+          description: DNI de la persona que realizó la reserva.
+        fechaAlta:
+          type: string
+          format: date-time
+          description: Fecha y hora en la que se realizó la reserva.
+        pagado:
+          type: string
+          description: Indica si la reserva ha sido pagada.
+        observaciones:
+          type: string
+          description: Observaciones adicionales sobre la reserva.
