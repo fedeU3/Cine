@@ -15,6 +15,13 @@ def get_movies_by_date(date_str):
 def get_movie(peliculaID):
     return get_movies_data(peliculaID)
 
+# Testgit
+
+@app.route("/test/<int:test>", methods=['GET'])
+def get_movie(test):
+    return get_movies_data(test)
+
+
 # Funcion para realizar reservas
 
 @app.route("/make_reservation", methods=['POST'])
